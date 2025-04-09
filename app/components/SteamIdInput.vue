@@ -24,7 +24,7 @@ function handleSubmit() {
       <label for="steam-id" class="text-sm text-gray-700 font-medium mb-2 block dark:text-gray-200">
         <span class="flex gap-1 items-center">
           <span class="i-carbon-game-console text-lg" />
-          Steam用户名/ID
+          Steam ID
         </span>
       </label>
       <div class="relative">
@@ -32,7 +32,7 @@ function handleSubmit() {
           id="steam-id"
           v-model="steamId"
           type="text"
-          placeholder="请输入您的Steam用户名或ID"
+          placeholder="请输入您的steamID"
           class="outline-none text-sm px-3 py-2.5 border border-gray-200 rounded-lg bg-white w-full transition sm:text-base sm:px-4 sm:py-3 dark:border-gray-700 focus:border-transparent dark:bg-gray-800 focus:ring-2 focus:ring-blue-500"
           :disabled="isLoading"
           @keyup.enter="handleSubmit"
