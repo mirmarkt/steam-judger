@@ -12,6 +12,9 @@
     "lint": "eslint .",
     "typecheck": "nuxi typecheck"
   },
+  "dependencies": {
+    "html2canvas-pro": "catalog:build"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:dev",
     "@iconify-json/carbon": "catalog:icons",

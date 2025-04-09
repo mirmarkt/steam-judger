@@ -5,9 +5,12 @@ const props = defineProps<{
   steamId: string
 }>()
 
+const reviewImageRef = ref(null)
+
 const isLoading = ref(true)
 const copySuccess = ref(false)
 const reviewText = ref('')
+const isGeneratingImage = ref(false)
 
 // 模拟从API获取数据
 onMounted(() => {
@@ -96,14 +99,28 @@ function goBack() {
               {{ copySuccess ? '已复制' : '复制文本' }}
             </button>
 
-            <!-- 分享按钮 -->
-            <button class="text-sm text-white px-3 py-1.5 rounded-lg bg-green-600 flex flex-1 gap-2 transition-colors items-center justify-center sm:px-4 sm:py-2 hover:bg-green-700 sm:flex-auto">
-              <span class="i-carbon-share" />
-              生成图片
+            <!-- 生成图片按钮 -->
+            <button
+              class="text-sm text-white px-3 py-1.5 rounded-lg bg-green-600 flex flex-1 gap-2 transition-colors items-center justify-center sm:px-4 sm:py-2 hover:bg-green-700 sm:flex-auto"
+              :disabled="isGeneratingImage"
+              :class="{ 'opacity-70 cursor-not-allowed': isGeneratingImage }"
+              @click="reviewImageRef?.generateImage()"
+            >
+              <span v-if="isGeneratingImage" class="i-carbon-circle-dash animate-spin" />
+              <span v-else class="i-carbon-share" />
+              {{ isGeneratingImage ? '生成中...' : '生成图片' }}
             </button>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- 图片生成器组件 -->
+  <ReviewImageGenerator
+    ref="reviewImageRef"
+    v-model:is-generating-image="isGeneratingImage"
+    :review-text="reviewText"
+    :steam-id="steamId"
+  />
 </template>
