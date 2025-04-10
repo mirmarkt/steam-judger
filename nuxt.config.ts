@@ -58,7 +58,7 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: false,
       routes: ['/'],
-      ignore: ['/hi'],
+      autoSubfolderIndex: false,
     },
     devProxy: {
       '/api': {
