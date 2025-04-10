@@ -1,5 +1,5 @@
 {
-  "name": "steam-judger",
+  "name": "steam-judger-web",
   "main": ".output/public/index.html",
   "compatibility_date": "2025-04-10"
   // "compatibility_flags": [
