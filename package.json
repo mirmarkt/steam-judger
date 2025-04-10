@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "html2canvas-pro": "catalog:build",
-    "markdown-it": "^14.1.0"
+    "markdown-it": "catalog:frontend"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:dev",
@@ -24,7 +24,7 @@
     "@nuxt/eslint": "catalog:build",
     "@nuxtjs/color-mode": "catalog:build",
     "@pinia/nuxt": "catalog:build",
-    "@types/markdown-it": "^14.1.2",
+    "@types/markdown-it": "catalog:dev",
     "@unocss/eslint-config": "catalog:build",
     "@unocss/nuxt": "catalog:build",
     "@vueuse/core": "catalog:frontend",
