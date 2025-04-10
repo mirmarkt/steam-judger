@@ -36,3 +36,5 @@ catalogs:
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild
+catalog:
+  wrangler: ^4.10.0
