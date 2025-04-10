@@ -52,6 +52,9 @@ catalogs:
     vue-tsc:
       specifier: ^2.2.8
       version: 2.2.8
+    wrangler:
+      specifier: ^4.10.0
+      version: 4.10.0
   frontend:
     '@vueuse/core':
       specifier: ^13.1.0
@@ -150,7 +153,7 @@ importers:
         specifier: catalog:dev
         version: 2.2.8(typescript@5.8.3)
       wrangler:
-        specifier: ^4.10.0
+        specifier: catalog:dev
         version: 4.10.0
 
 packages:
