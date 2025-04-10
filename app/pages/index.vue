@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { appDescription, appName } from '~/constants'
+import { appDescription } from '~/constants'
 </script>
 
 <template>

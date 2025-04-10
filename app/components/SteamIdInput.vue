@@ -2,19 +2,46 @@
 const steamId = ref('')
 const isLoading = ref(false)
 const router = useRouter()
+const error = ref('')
 
-function handleSubmit() {
+function extractSteamIdFromUrl(url: string) {
+  // 1. https://web.xiaoheihe.cn/account/steam_personal_page/home?userid=14979940&steam_id=76561198438622263&heybox_id=14979940
+  // 2. https://steamcommunity.com/profiles/76561198438622263/
+  const _url = url.trim()
+  const steamIdMatch = _url.match(/steam_id=(\d+)|profiles\/(\d+)/)
+  if (steamIdMatch) {
+    return steamIdMatch[1]! || steamIdMatch[2]!
+  }
+  return url
+}
+
+async function handleSubmit() {
   if (!steamId.value)
     return
 
+  error.value = ''
   isLoading.value = true
 
-  // 模拟API调用，实际项目中应该调用真实的API
-  setTimeout(() => {
+  const _steamId = extractSteamIdFromUrl(steamId.value)
+
+  try {
+    // 调用获取/缓存Steam游戏数据API
+    const response = await fetch(`/api/games/${encodeURIComponent(_steamId)}`)
+
+    if (!response.ok) { 
+      const errorData = await response.text()
+      throw new Error(errorData || '获取游戏数据失败')
+    }
+
+    const data = await response.json()
+
+    // 跳转到结果页面，并传递steamId和dataId参数
+    router.push(`/review?steamId=${encodeURIComponent(_steamId)}&dataId=${encodeURIComponent(data.dataId)}`)
+  }
+  catch (err: any) {
+    error.value = err.message || '获取游戏数据失败，请稍后重试'
     isLoading.value = false
-    // 跳转到结果页面，并传递steamId参数
-    router.push(`/review?steamId=${encodeURIComponent(steamId.value)}`)
-  }, 1000)
+  }
 }
 </script>
 
@@ -41,6 +68,12 @@ function handleSubmit() {
       <div class="text-xs text-gray-500 mt-2 flex gap-1 items-center dark:text-gray-400">
         <span class="i-carbon-information" />
         <a href="https://help.steampowered.com/zh-cn/faqs/view/2816-BE67-5B69-0FEC" target="_blank" class="text-blue-500 hover:underline">如何查找我的Steam ID?</a>
+      </div>
+
+      <!-- 错误信息显示 -->
+      <div v-if="error" class="text-sm text-red-500 mt-2 flex gap-1 items-center">
+        <span class="i-carbon-warning" />
+        <span>{{ error }}</span>
       </div>
     </div>
 

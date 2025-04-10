@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { appName } from '~/constants'
+// 导入Markdown样式
+import './assets/css/markdown.css'
 
 useHead({
   title: appName,

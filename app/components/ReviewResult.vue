@@ -1,40 +1,97 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import MarkdownIt from 'markdown-it'
+import { computed, onMounted, ref } from 'vue'
 
 const props = defineProps<{
   steamId: string
+  dataId: string
 }>()
 
-const reviewImageRef = ref(null)
+const reviewImageRef = ref<any>(null)
 
 const isLoading = ref(true)
 const copySuccess = ref(false)
 const reviewText = ref('')
 const isGeneratingImage = ref(false)
+const error = ref('')
+const isStreamingComplete = ref(false)
 
-// 模拟从API获取数据
-onMounted(() => {
-  // 实际项目中应该调用真实的API
-  setTimeout(() => {
-    generateMockReview()
-    isLoading.value = false
-  }, 1500)
+// 初始化markdown-it解析器
+const md = new MarkdownIt()
+
+// 解析Markdown内容为HTML
+const parsedReviewHtml = computed(() => {
+  return reviewText.value ? md.render(reviewText.value) : ''
 })
 
-// 生成模拟的锐评内容
-function generateMockReview() {
-  reviewText.value = `作为一位Steam游戏玩家，你的游戏库反映了独特的品味和偏好。
+// 从API获取数据
+onMounted(() => {
+  if (props.dataId) {
+    fetchAnalysis()
+  }
+  else {
+    error.value = '缺少必要的数据ID参数'
+    isLoading.value = false
+  }
+})
 
-你似乎偏爱策略和角色扮演类游戏，特别是那些提供深度沉浸体验的作品。《文明VI》和《全面战争》系列在你的游戏时间中占据显著比例，表明你享受宏观决策和历史模拟的复杂性。
+// 获取AI分析结果（流式传输）
+async function fetchAnalysis() {
+  isLoading.value = true
+  error.value = ''
+  reviewText.value = ''
+  isStreamingComplete.value = false
 
-值得注意的是，你对独立游戏的探索精神。《空洞骑士》和《星露谷物语》等作品在你的收藏中占有一席之地，显示你欣赏创新游戏设计和独特叙事的能力。
+  try {
+    const response = await fetch(`/api/analyze/${encodeURIComponent(props.dataId)}`)
 
-然而，你的游戏库中缺乏多样性的竞技类游戏，这可能意味着你更喜欢个人体验而非竞争环境。考虑尝试一些高质量的合作或轻度竞技游戏，可能会为你的游戏体验增添新的维度。`
+    if (!response.ok) {
+      const errorData = await response.text()
+      throw new Error(errorData || '获取分析结果失败')
+    }
+
+    if (!response.body) {
+      throw new Error('浏览器不支持流式传输')
+    }
+
+    // 处理流式响应
+    const reader = response.body.getReader()
+    const decoder = new TextDecoder()
+
+    isLoading.value = false
+
+    // 读取流数据
+    while (true) {
+      const { done, value } = await reader.read()
+
+      if (done) {
+        isStreamingComplete.value = true
+        break
+      }
+
+      // 解码并添加到文本中
+      const text = decoder.decode(value, { stream: true })
+      // 使用nextTick确保DOM更新
+      reviewText.value += text
+      // 强制Vue更新视图
+      await nextTick()
+    }
+  }
+  catch (err: any) {
+    error.value = err.message || '获取分析结果失败，请稍后重试'
+    isLoading.value = false
+  }
 }
 
 // 复制锐评文本
 function copyReview() {
-  navigator.clipboard.writeText(reviewText.value)
+  // 创建一个临时元素来获取纯文本内容（去除HTML标签）
+  const tempElement = document.createElement('div')
+  tempElement.innerHTML = parsedReviewHtml.value
+  // eslint-disable-next-line unicorn/prefer-dom-node-text-content
+  const textContent = tempElement.textContent || tempElement.innerText || reviewText.value
+
+  navigator.clipboard.writeText(textContent)
   copySuccess.value = true
   setTimeout(() => {
     copySuccess.value = false
@@ -58,6 +115,24 @@ function goBack() {
       </p>
     </div>
 
+    <!-- 错误状态 -->
+    <div v-else-if="error" class="py-20 flex flex-col items-center justify-center">
+      <div class="i-carbon-warning text-5xl text-red-500 mb-4" />
+      <p class="text-lg text-red-500 font-medium mb-2">
+        出错了
+      </p>
+      <p class="text-sm text-gray-600 mb-4 text-center max-w-md dark:text-gray-300">
+        {{ error }}
+      </p>
+      <button
+        class="text-sm text-white px-4 py-2 rounded-lg bg-blue-600 flex gap-2 transition-colors items-center justify-center hover:bg-blue-700"
+        @click="goBack"
+      >
+        <span class="i-carbon-arrow-left" />
+        返回首页
+      </button>
+    </div>
+
     <!-- 结果展示 -->
     <div v-else class="rounded-xl bg-white shadow-lg overflow-hidden dark:bg-gray-800">
       <!-- 头部 -->
@@ -74,8 +149,20 @@ function goBack() {
       <!-- 锐评内容 -->
       <div class="p-4 sm:p-6">
         <div class="mb-4 p-3 rounded-lg bg-gray-50 sm:mb-6 sm:p-5 dark:bg-gray-900">
-          <p class="text-sm text-gray-800 leading-relaxed whitespace-pre-line sm:text-base dark:text-gray-200">
-            {{ reviewText }}
+          <!-- 流式加载中 -->
+          <div v-if="reviewText && !isStreamingComplete" class="mb-2 flex items-center justify-end">
+            <span class="text-xs text-blue-500 flex gap-1 items-center">
+              <span class="i-carbon-circle-dash animate-spin" />
+              正在生成中...
+            </span>
+          </div>
+          <div
+            v-if="reviewText"
+            class="markdown-content text-sm text-gray-800 leading-relaxed sm:text-base dark:text-gray-200"
+            v-html="parsedReviewHtml"
+          />
+          <p v-else class="text-sm text-gray-800 leading-relaxed sm:text-base dark:text-gray-200">
+            正在生成AI锐评...
           </p>
         </div>
 

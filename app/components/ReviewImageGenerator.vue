@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import html2canvas from 'html2canvas-pro'
-import { ref } from 'vue'
+import MarkdownIt from 'markdown-it'
+import { computed, ref, watch } from 'vue'
 
 const props = defineProps<{
   reviewText: string
@@ -13,7 +14,62 @@ const emit = defineEmits<{
 }>()
 
 const imageRef = ref<HTMLElement | null>(null)
+const reviewTextRef = ref<HTMLElement | null>(null)
 const downloadLink = ref('')
+const fontSize = ref(20) // 默认字体大小
+
+// 初始化markdown-it解析器
+const md = new MarkdownIt()
+
+// 解析Markdown内容为HTML
+const parsedReviewHtml = computed(() => {
+  return props.reviewText ? md.render(props.reviewText) : ''
+})
+
+// 监听reviewText变化，调整字体大小
+watch(() => props.reviewText, () => {
+  // 在下一个渲染周期调整字体大小
+  setTimeout(adjustFontSize, 0)
+}, { immediate: true })
+
+// 根据内容长度自动调整字体大小
+function adjustFontSize() {
+  if (!reviewTextRef.value || !imageRef.value)
+    return
+
+  // 获取容器元素
+  const reviewBody = imageRef.value.querySelector('.review-body')
+  if (!reviewBody)
+    return
+
+  // 初始字体大小
+  fontSize.value = 20
+
+  // 给内容一点时间渲染
+  setTimeout(() => {
+    // 获取容器高度和内容高度
+    const containerHeight = reviewBody.clientHeight
+    const contentHeight = reviewTextRef.value?.scrollHeight || 0
+
+    // 如果内容高度超过容器高度，逐步减小字体大小
+    if (contentHeight > containerHeight) {
+      // 计算需要的缩放比例，更保守一点以确保完全显示
+      const ratio = (containerHeight / contentHeight) * 0.9
+      // 根据比例调整字体大小，但不小于10px
+      const newSize = Math.max(10, Math.floor(fontSize.value * ratio))
+      fontSize.value = newSize
+
+      // 再次检查调整后的高度
+      setTimeout(() => {
+        const newContentHeight = reviewTextRef.value?.scrollHeight || 0
+        if (newContentHeight > containerHeight) {
+          // 如果仍然超出，再次调整，更激进地减小字体
+          fontSize.value = Math.max(8, fontSize.value - 2)
+        }
+      }, 100)
+    }
+  }, 100)
+}
 
 // 生成图片
 async function generateImage() {
@@ -23,11 +79,39 @@ async function generateImage() {
   try {
     emit('update:isGeneratingImage', true)
 
-    // 使用html2canvas将DOM元素转换为canvas
+    // 确保在生成图片前调整字体大小并等待调整完成
+    adjustFontSize()
+
+    // 等待字体调整和渲染完成，增加等待时间确保完全渲染
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    // 再次检查并调整字体大小，确保内容完全适应容器
+    const reviewBody = imageRef.value.querySelector('.review-body')
+    const contentHeight = reviewTextRef.value?.scrollHeight || 0
+    const containerHeight = reviewBody?.clientHeight || 0
+
+    if (contentHeight > containerHeight) {
+      // 如果内容仍然超出，进一步减小字体
+      fontSize.value = Math.max(8, fontSize.value - 1)
+      // 再次等待渲染
+      await new Promise(resolve => setTimeout(resolve, 300))
+    }
+
+    // 使用html2canvas将DOM元素转换为canvas，增加配置以确保完整捕获
     const canvas = await html2canvas(imageRef.value, {
       scale: 2, // 提高图片质量
       backgroundColor: '#ffffff',
       logging: false,
+      useCORS: true, // 允许跨域图片
+      allowTaint: true, // 允许污染canvas
+      onclone: (clonedDoc) => {
+        // 在克隆的文档中确保内容可见
+        const clonedElement = clonedDoc.querySelector('.review-text') as HTMLElement
+        if (clonedElement) {
+          clonedElement.style.overflow = 'visible'
+          clonedElement.style.whiteSpace = 'normal'
+        }
+      },
     })
 
     // 将canvas转换为图片URL
@@ -72,9 +156,12 @@ defineExpose({
 
       <!-- 锐评内容 -->
       <div class="review-body">
-        <p class="review-text">
-          {{ reviewText }}
-        </p>
+        <div
+          ref="reviewTextRef"
+          class="review-text markdown-content"
+          :style="{ fontSize: `${fontSize}px` }"
+          v-html="parsedReviewHtml"
+        />
       </div>
 
       <!-- 底部 -->
@@ -90,7 +177,10 @@ defineExpose({
 <style scoped>
 .review-image-template {
   width: 1080px;
-  height: 1080px;
+  /* 使用自动高度，完全适应内容 */
+  height: auto;
+  min-height: 1080px;
+  max-height: 3000px; /* 增加最大高度，确保长内容能够显示 */
   background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
   padding: 40px;
   box-sizing: border-box;
@@ -101,18 +191,19 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: visible; /* 确保内容不被裁剪 */
 }
 
 .review-image-content {
   width: 100%;
-  height: 100%;
+  height: auto; /* 自动高度适应内容 */
   background-color: white;
   border-radius: 24px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   padding: 40px;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible; /* 确保内容不被裁剪 */
   position: relative;
 }
 
@@ -177,19 +268,17 @@ defineExpose({
   border-radius: 16px;
   padding: 30px;
   margin-bottom: 30px;
-  overflow: hidden;
+  /* 允许内容自然流动 */
   position: relative;
 }
 
 .review-text {
-  font-size: 24px;
+  /* 字体大小由JavaScript动态控制 */
   line-height: 1.6;
   color: #333;
-  white-space: pre-line;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 12;
-  -webkit-box-orient: vertical;
+  white-space: normal;
+  /* 确保内容完整显示 */
+  overflow: visible;
 }
 
 .review-footer {

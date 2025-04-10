@@ -13,7 +13,8 @@
     "typecheck": "nuxi typecheck"
   },
   "dependencies": {
-    "html2canvas-pro": "catalog:build"
+    "html2canvas-pro": "catalog:build",
+    "markdown-it": "^14.1.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:dev",
@@ -23,6 +24,7 @@
     "@nuxt/eslint": "catalog:build",
     "@nuxtjs/color-mode": "catalog:build",
     "@pinia/nuxt": "catalog:build",
+    "@types/markdown-it": "^14.1.2",
     "@unocss/eslint-config": "catalog:build",
     "@unocss/nuxt": "catalog:build",
     "@vueuse/core": "catalog:frontend",
