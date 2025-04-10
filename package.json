@@ -37,7 +37,7 @@
     "unocss": "catalog:build",
     "vue": "catalog:frontend",
     "vue-tsc": "catalog:dev",
-    "wrangler": "catalog:"
+    "wrangler": "catalog:dev"
   },
   "resolutions": {
     "@nuxt/devtools": "catalog:build",

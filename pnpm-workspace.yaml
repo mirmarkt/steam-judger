@@ -22,6 +22,7 @@ catalogs:
     eslint-plugin-format: ^1.0.1
     typescript: ^5.8.3
     vue-tsc: ^2.2.8
+    wrangler: ^4.10.0
 
   frontend:
     '@vueuse/core': ^13.1.0
@@ -36,5 +37,3 @@ catalogs:
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild
-catalog:
-  wrangler: ^4.10.0
