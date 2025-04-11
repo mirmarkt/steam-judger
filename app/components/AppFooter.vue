@@ -12,7 +12,7 @@
             <span class="i-carbon-help" />
             <span>帮助</span>
           </a>  
-          <a href="https://github.com" target="_blank" class="flex gap-1 transition-colors items-center hover:text-blue-500">
+          <a href="https://github.com/kutius/steam-judger" target="_blank" class="flex gap-1 transition-colors items-center hover:text-blue-500">
             <span class="i-carbon-logo-github" />
             <span>GitHub</span>
           </a>
