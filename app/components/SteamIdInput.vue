@@ -28,12 +28,19 @@ async function handleSubmit() {
     // 调用获取/缓存Steam游戏数据API
     const response = await fetch(`/api/games/${encodeURIComponent(_steamId)}`)
 
-    if (!response.ok) { 
+    if (!response.ok) {
       const errorData = await response.text()
       throw new Error(errorData || '获取游戏数据失败')
     }
 
     const data = await response.json()
+
+    // 检查游戏数量，如果为0则提示用户
+    if (data.gameCount === 0) {
+      error.value = '您的Steam账号游戏数据为空，无法生成AI锐评'
+      isLoading.value = false
+      return
+    }
 
     // 跳转到结果页面，并传递steamId和dataId参数
     router.push(`/review?steamId=${encodeURIComponent(_steamId)}&dataId=${encodeURIComponent(data.dataId)}`)
