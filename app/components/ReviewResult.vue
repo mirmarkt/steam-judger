@@ -40,7 +40,7 @@ onMounted(() => {
 // 获取模型信息
 async function fetchModelInfo() {
   try {
-    const response = await fetch('/api/analyze/model')
+    const response = await fetch('/api/model')
     if (response.ok) {
       modelInfo.value = await response.json()
     }
