@@ -7,6 +7,7 @@ const props = defineProps<{
   reviewText: string
   steamId: string
   isGeneratingImage: boolean
+  modelInfo?: { modelName: string, version: string } | null
 }>()
 
 const emit = defineEmits<{
@@ -169,6 +170,9 @@ defineExpose({
         <p class="steam-id">
           Steam ID: {{ steamId }}
         </p>
+        <p v-if="modelInfo" class="model-info">
+          {{ modelInfo.modelName }} {{ modelInfo.version }}
+        </p>
       </div>
     </div>
   </div>
@@ -290,5 +294,23 @@ defineExpose({
 .steam-id {
   font-size: 18px;
   color: #666;
+}
+
+.model-info {
+  font-size: 16px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.model-info:before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-color: #666;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26a12 12 0 1 1 12-12 12 12 0 0 1-12 12z'/%3E%3Cpath d='M16 10a6 6 0 1 0 6 6 6 6 0 0 0-6-6zm0 10a4 4 0 1 1 4-4 4 4 0 0 1-4 4z'/%3E%3C/svg%3E");
+  mask-size: cover;
 }
 </style>

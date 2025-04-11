@@ -15,6 +15,7 @@ const reviewText = ref('')
 const isGeneratingImage = ref(false)
 const error = ref('')
 const isStreamingComplete = ref(false)
+const modelInfo = ref<{ modelName: string, version: string } | null>(null)
 
 // 初始化markdown-it解析器
 const md = new MarkdownIt()
@@ -28,12 +29,26 @@ const parsedReviewHtml = computed(() => {
 onMounted(() => {
   if (props.dataId) {
     fetchAnalysis()
+    fetchModelInfo()
   }
   else {
     error.value = '缺少必要的数据ID参数'
     isLoading.value = false
   }
 })
+
+// 获取模型信息
+async function fetchModelInfo() {
+  try {
+    const response = await fetch('/api/analyze/model')
+    if (response.ok) {
+      modelInfo.value = await response.json()
+    }
+  }
+  catch (err) {
+    console.error('获取模型信息失败', err)
+  }
+}
 
 // 获取AI分析结果（流式传输）
 async function fetchAnalysis() {
@@ -141,9 +156,15 @@ function goBack() {
           <span class="i-carbon-analytics" />
           Steam游戏库AI锐评
         </h1>
-        <p class="text-xs text-blue-100 mt-1 sm:text-sm">
-          Steam ID: {{ steamId }}
-        </p>
+        <div class="flex items-center justify-between">
+          <p class="text-xs text-blue-100 mt-1 sm:text-sm">
+            Steam ID: {{ steamId }}
+          </p>
+          <p v-if="modelInfo" class="text-xs text-blue-100 mt-1 flex gap-1 items-center sm:text-sm">
+            <span class="i-carbon-machine-learning-model text-xs" />
+            {{ modelInfo.modelName }} {{ modelInfo.version }}
+          </p>
+        </div>
       </div>
 
       <!-- 锐评内容 -->
@@ -209,5 +230,6 @@ function goBack() {
     v-model:is-generating-image="isGeneratingImage"
     :review-text="reviewText"
     :steam-id="steamId"
+    :model-info="modelInfo"
   />
 </template>
