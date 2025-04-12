@@ -16,6 +16,17 @@ const isGeneratingImage = ref(false)
 const error = ref('')
 const isStreamingComplete = ref(false)
 const modelInfo = ref<{ modelName: string, version: string } | null>(null)
+const userInfo = ref<{
+  steamId: string
+  personaName: string
+  profileUrl: string
+  avatarIconUrl: string
+  avatarMediumUrl: string
+  avatarFullUrl: string
+  personaState: number
+  visibilityState: number
+} | null>(null)
+const isLoadingUserInfo = ref(false)
 
 // 初始化markdown-it解析器
 const md = new MarkdownIt()
@@ -30,6 +41,7 @@ onMounted(() => {
   if (props.dataId) {
     fetchAnalysis()
     fetchModelInfo()
+    fetchUserInfo()
   }
   else {
     error.value = '缺少必要的数据ID参数'
@@ -47,6 +59,26 @@ async function fetchModelInfo() {
   }
   catch (err) {
     console.error('获取模型信息失败', err)
+  }
+}
+
+// 获取Steam用户信息
+async function fetchUserInfo() {
+  if (!props.steamId)
+    return
+
+  isLoadingUserInfo.value = true
+  try {
+    const response = await fetch(`/api/user/${encodeURIComponent(props.steamId)}`)
+    if (response.ok) {
+      userInfo.value = await response.json()
+    }
+  }
+  catch (err) {
+    console.error('获取Steam用户信息失败', err)
+  }
+  finally {
+    isLoadingUserInfo.value = false
   }
 }
 
@@ -152,18 +184,39 @@ function goBack() {
     <div v-else class="rounded-xl bg-white shadow-lg overflow-hidden dark:bg-gray-800">
       <!-- 头部 -->
       <div class="bg-gradient-to-r px-4 py-3 from-blue-600 to-indigo-600 sm:px-6 sm:py-4">
-        <h1 class="text-lg text-white font-bold flex gap-2 items-center sm:text-xl">
-          <span class="i-carbon-analytics" />
-          Steam游戏库AI锐评
-        </h1>
-        <div class="flex items-center justify-between">
-          <p class="text-xs text-blue-100 mt-1 sm:text-sm">
-            Steam ID: {{ steamId }}
-          </p>
-          <p v-if="modelInfo" class="text-xs text-blue-100 mt-1 flex gap-1 items-center sm:text-sm">
-            <span class="i-carbon-machine-learning-model text-xs" />
-            {{ modelInfo.modelName }} {{ modelInfo.version }}
-          </p>
+        <div class="flex items-start justify-between">
+          <!-- 用户信息区域 -->
+          <div class="flex gap-3 items-center">
+            <!-- 用户头像 -->
+            <div class="rounded-full bg-blue-400/30 flex h-12 w-12 items-center justify-center overflow-hidden sm:h-14 sm:w-14">
+              <img v-if="userInfo?.avatarMediumUrl" :src="userInfo.avatarMediumUrl" alt="Steam头像" class="h-full w-full object-cover">
+              <span v-else class="i-carbon-user text-xl text-white" />
+            </div>
+
+            <!-- 用户名称和ID -->
+            <div>
+              <h2 class="text-lg font-bold sm:text-xl dark:text-white">
+                {{ userInfo?.personaName || '游戏玩家' }}
+              </h2>
+              <p class="text-xs text-gray flex gap-1 items-center sm:text-sm dark:text-blue-100/70">
+                <span class="i-carbon-logo-steam" />
+                {{ steamId }}
+              </p>
+            </div>
+          </div>
+
+          <!-- 报告信息 -->
+          <div class="text-right">
+            <h1 class="text-lg text-white font-bold flex gap-2 items-center justify-end sm:text-xl">
+              <span class="i-carbon-analytics" />
+              AI锐评报告
+              <span v-if="modelInfo" class="text-sm px-2 py-1 rounded-lg bg-blue-500/80">{{ modelInfo.version }}</span>
+            </h1>
+            <p v-if="modelInfo" class="text-sm text-gray mt-1 flex gap-1 items-center justify-end sm:text-sm dark:text-blue-100/70">
+              <span class="i-carbon-ai-generate text-xs" />
+              {{ modelInfo.modelName }}
+            </p>
+          </div>
         </div>
       </div>
 
