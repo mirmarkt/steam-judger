@@ -66,7 +66,7 @@ async function handleSubmit() {
           id="steam-id"
           v-model="steamId"
           type="text"
-          placeholder="请输入您的steamID"
+          placeholder="请输入您的 steam 的 ID 或者个人主页链接"
           class="outline-none text-sm px-3 py-2.5 border border-gray-200 rounded-lg bg-white w-full transition sm:text-base sm:px-4 sm:py-3 dark:border-gray-700 focus:border-transparent dark:bg-gray-800 focus:ring-2 focus:ring-blue-500"
           :disabled="isLoading"
           @keyup.enter="handleSubmit"

@@ -23,10 +23,10 @@ import { appDescription } from '~/constants'
       <SteamIdInput />
     </div>
 
-    <div class="text-xs text-gray-500 flex gap-1 items-center sm:text-sm dark:text-gray-400">
-      <span class="i-carbon-information-square" />
+    <div class="text-xs text-gray-500 px-4 py-2.5 rounded-full bg-gray-50/80 flex gap-2 shadow-sm transition-all duration-300 items-center backdrop-blur-md sm:text-sm dark:text-gray-400 dark:bg-gray-800/60 hover:bg-gray-50/90 hover:shadow dark:hover:bg-gray-800/70">
+      <span class="i-carbon-location-heart-filled text-blue-500" />
       <span>如果您觉得吐槽姬给您带来了快乐，欢迎
-        <NuxtLink to="/sponsor" class="text-blue-500 hover:underline">支持我们</NuxtLink>
+        <NuxtLink to="/sponsor" class="text-blue-500 font-medium transition-colors hover:text-blue-600 hover:underline">支持我们</NuxtLink>
         继续开发
       </span>
     </div>
