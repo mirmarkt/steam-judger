@@ -8,6 +8,16 @@ const props = defineProps<{
   steamId: string
   isGeneratingImage: boolean
   modelInfo?: { modelName: string, version: string } | null
+  userInfo?: {
+    steamId: string
+    personaName: string
+    profileUrl: string
+    avatarIconUrl: string
+    avatarMediumUrl: string
+    avatarFullUrl: string
+    personaState: number
+    visibilityState: number
+  } | null
 }>()
 
 const emit = defineEmits<{
@@ -167,9 +177,26 @@ defineExpose({
 
       <!-- 底部 -->
       <div class="review-footer">
-        <p class="steam-id">
-          Steam ID: {{ steamId }}
-        </p>
+        <div class="user-info">
+          <!-- 用户头像 -->
+          <div v-if="userInfo?.avatarMediumUrl" class="user-avatar">
+            <img :src="userInfo.avatarMediumUrl" alt="Steam头像">
+          </div>
+          <div v-else class="user-avatar user-avatar-placeholder">
+            <div class="user-avatar-icon" />
+          </div>
+
+          <!-- 用户ID信息 -->
+          <div class="user-details">
+            <p v-if="userInfo?.personaName" class="user-name">
+              {{ userInfo.personaName }}
+            </p>
+            <p class="steam-id">
+              Steam ID: {{ steamId }}
+            </p>
+          </div>
+        </div>
+
         <p v-if="modelInfo" class="model-info">
           {{ modelInfo.modelName }} {{ modelInfo.version }}
         </p>
@@ -291,8 +318,55 @@ defineExpose({
   align-items: center;
 }
 
-.steam-id {
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #4a89dc;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-avatar-placeholder {
+  background-color: #e4e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-avatar-icon {
+  width: 24px;
+  height: 24px;
+  background-color: #666;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 8a5 5 0 1 0 5 5 5 5 0 0 0-5-5zm0 8a3 3 0 1 1 3-3 3 3 0 0 1-3 3z'/%3E%3Cpath d='M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm0 26c-3.12 0-5.95-1.28-8-3.33v-2.89c0-2.08 3.5-3.33 8-3.33s8 1.25 8 3.33v2.89A11.91 11.91 0 0 1 16 28zm8-6.22c-1.81-1.4-4.54-2.11-8-2.11s-6.19.71-8 2.11v-1.11C8 19 11.5 18 16 18s8 1 8 2.67zm2-4.45A11.91 11.91 0 0 0 16 4a11.91 11.91 0 0 0-10 5.33v2.89c0-1.67 3.5-2.67 8-2.67s8 1 8 2.67z'/%3E%3C/svg%3E");
+  mask-size: cover;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-name {
   font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.steam-id {
+  font-size: 14px;
   color: #666;
 }
 

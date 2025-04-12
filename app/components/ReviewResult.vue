@@ -284,5 +284,6 @@ function goBack() {
     :review-text="reviewText"
     :steam-id="steamId"
     :model-info="modelInfo"
+    :user-info="userInfo"
   />
 </template>
