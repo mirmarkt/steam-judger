@@ -25,6 +25,14 @@ const isHomePage = computed(() => route.path === '/')
           <span class="xs:inline hidden">首页</span>
         </NuxtLink>
 
+        <NuxtLink
+          to="/sponsor"
+          class="text-xs px-2 py-1 rounded-md flex gap-1 transition-colors items-center sm:text-sm sm:px-3 sm:py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800"
+        >
+          <span class="i-carbon-favorite" />
+          <span class="xs:inline hidden">赞助我们</span>
+        </NuxtLink>
+
         <!-- Theme toggle button -->
         <ThemeToggle />
       </div>

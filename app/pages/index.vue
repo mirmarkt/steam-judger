@@ -25,7 +25,10 @@ import { appDescription } from '~/constants'
 
     <div class="text-xs text-gray-500 flex gap-1 items-center sm:text-sm dark:text-gray-400">
       <span class="i-carbon-information-square" />
-      <span>输入您的Steam ID，获取AI生成的游戏库锐评</span>
+      <span>如果您觉得吐槽姬给您带来了快乐，欢迎
+        <NuxtLink to="/sponsor" class="text-blue-500 hover:underline">支持我们</NuxtLink>
+        继续开发
+      </span>
     </div>
   </div>
 </template>
