@@ -131,7 +131,9 @@ async function generateImage() {
 
     // 自动下载图片
     const link = document.createElement('a')
-    link.download = `steam-review-${props.steamId}.png`
+    // steam-review-xxx-0413.png
+    const now = `${new Date().getMonth() + 1}${new Date().getDate()}`
+    link.download = `steam-review-${props.userInfo?.personaName}-${now}.png`
     link.href = imageUrl
     link.click()
 
