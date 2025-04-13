@@ -16,6 +16,9 @@ const isGeneratingImage = ref(false)
 const error = ref('')
 const isStreamingComplete = ref(false)
 const modelInfo = ref<{ modelName: string, version: string } | null>(null)
+const progress = ref(0)
+const progressTimer = ref<number | null>(null)
+const retryCount = ref(0)
 const userInfo = ref<{
   steamId: string
   personaName: string
@@ -88,6 +91,8 @@ async function fetchAnalysis() {
   error.value = ''
   reviewText.value = ''
   isStreamingComplete.value = false
+  progress.value = 0
+  retryCount.value++
 
   try {
     const response = await fetch(`/api/analyze/${encodeURIComponent(props.dataId)}`)
@@ -105,6 +110,15 @@ async function fetchAnalysis() {
     const reader = response.body.getReader()
     const decoder = new TextDecoder()
 
+    // 开始流式传输时，启动进度条模拟
+    if (progressTimer.value)
+      clearInterval(progressTimer.value)
+    progressTimer.value = setInterval(() => {
+      if (progress.value < 90) {
+        progress.value += Math.random() * 2
+      }
+    }, 1000)
+
     isLoading.value = false
 
     // 读取流数据
@@ -113,6 +127,11 @@ async function fetchAnalysis() {
 
       if (done) {
         isStreamingComplete.value = true
+        progress.value = 100
+        if (progressTimer.value) {
+          clearInterval(progressTimer.value)
+          progressTimer.value = null
+        }
         break
       }
 
@@ -127,6 +146,10 @@ async function fetchAnalysis() {
   catch (err: any) {
     error.value = err.message || '获取分析结果失败，请稍后重试'
     isLoading.value = false
+    if (progressTimer.value) {
+      clearInterval(progressTimer.value)
+      progressTimer.value = null
+    }
   }
 }
 
@@ -182,6 +205,15 @@ function goBack() {
 
     <!-- 结果展示 -->
     <div v-else class="rounded-xl bg-white shadow-lg overflow-hidden dark:bg-gray-800">
+      <!-- 进度条 -->
+      <div v-if="!isStreamingComplete" class="bg-gradient-to-r mb-4 px-4 py-3 from-blue-600/10 to-indigo-600/10 sm:px-6 sm:py-4">
+        <div class="rounded-full bg-gray-200 h-2 w-full overflow-hidden dark:bg-gray-700">
+          <div
+            class="bg-blue-500 h-full transition-all duration-300 ease-out"
+            :style="{ width: `${progress}%` }"
+          />
+        </div>
+      </div>
       <!-- 头部 -->
       <div class="bg-gradient-to-r px-4 py-3 from-blue-600 to-indigo-600 sm:px-6 sm:py-4">
         <div class="flex flex-col gap-3 items-center md:flex-row md:items-start md:justify-between">
@@ -246,7 +278,7 @@ function goBack() {
             v-html="parsedReviewHtml"
           />
           <p v-else class="text-sm text-gray-800 leading-relaxed sm:text-base dark:text-gray-200">
-            正在生成AI锐评...
+            AI正在思考，请耐心等待...
           </p>
         </div>
 
