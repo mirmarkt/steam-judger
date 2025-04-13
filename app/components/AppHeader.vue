@@ -26,6 +26,14 @@ const isHomePage = computed(() => route.path === '/')
         </NuxtLink>
 
         <NuxtLink
+          to="/export"
+          class="text-xs px-2 py-1 rounded-md flex gap-1 transition-colors items-center sm:text-sm sm:px-3 sm:py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800"
+        >
+          <span class="i-carbon-data-share" />
+          <span class="xs:inline hidden">导出数据</span>
+        </NuxtLink>
+
+        <NuxtLink
           to="/sponsor"
           class="text-xs px-2 py-1 rounded-md flex gap-1 transition-colors items-center sm:text-sm sm:px-3 sm:py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800"
         >

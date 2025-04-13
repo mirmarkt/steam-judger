@@ -30,6 +30,14 @@ import { appDescription } from '~/constants'
       <SteamIdInput />
     </div>
 
+    <!-- 导出数据入口 -->
+    <div class="mb-6 text-center">
+      <NuxtLink to="/export" class="text-blue-700 px-4 py-2 rounded-lg bg-blue-100 inline-flex gap-2 transition-colors items-center dark:text-blue-300 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-800/70">
+        <span class="i-carbon-data-share" />
+        <span>导出数据 & 自定义Prompt</span>
+      </NuxtLink>
+    </div>
+
     <div class="text-xs text-gray-500 px-4 py-2.5 rounded-full bg-gray-50/80 flex gap-2 shadow-sm transition-all duration-300 items-center backdrop-blur-md sm:text-sm dark:text-gray-400 dark:bg-gray-800/60 hover:bg-gray-50/90 hover:shadow dark:hover:bg-gray-800/70">
       <span class="i-carbon-location-heart-filled text-blue-500" />
       <span>如果您觉得吐槽姬给您带来了快乐，欢迎
