@@ -248,7 +248,7 @@ function goBack() {
           <div class="text-center md:text-right">
             <h1 class="text-lg font-bold flex gap-2 items-center justify-center sm:text-xl dark:text-white md:justify-end">
               <span class="i-carbon-analytics" />
-              AI锐评报告
+              <span class="underline decoration-wavy">AI锐评报告</span>
               <span v-if="modelInfo" class="text-sm px-2 py-1 rounded-lg bg-blue-500/80">{{ modelInfo.version }}</span>
             </h1>
             <p
