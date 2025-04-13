@@ -173,8 +173,7 @@ function goBack() {
       </p>
       <button
         class="text-sm text-white px-4 py-2 rounded-lg bg-blue-600 flex gap-2 transition-colors items-center justify-center hover:bg-blue-700"
-        @click="goBack"
-      >
+        @click="goBack">
         <span class="i-carbon-arrow-left" />
         返回首页
       </button>
@@ -184,21 +183,24 @@ function goBack() {
     <div v-else class="rounded-xl bg-white shadow-lg overflow-hidden dark:bg-gray-800">
       <!-- 头部 -->
       <div class="bg-gradient-to-r px-4 py-3 from-blue-600 to-indigo-600 sm:px-6 sm:py-4">
-        <div class="flex items-start justify-between">
+        <div class="flex flex-col gap-3 items-center md:flex-row md:items-start md:justify-between">
           <!-- 用户信息区域 -->
           <div class="flex gap-3 items-center">
             <!-- 用户头像 -->
-            <div class="rounded-full bg-blue-400/30 flex h-12 w-12 items-center justify-center overflow-hidden sm:h-14 sm:w-14">
-              <img v-if="userInfo?.avatarMediumUrl" :src="userInfo.avatarMediumUrl" alt="Steam头像" class="h-full w-full object-cover">
+            <div
+              class="rounded-full bg-blue-400/30 flex h-12 w-12 items-center justify-center overflow-hidden sm:h-14 sm:w-14">
+              <img v-if="userInfo?.avatarMediumUrl" :src="userInfo.avatarMediumUrl" alt="Steam头像"
+                class="h-full w-full object-cover">
               <span v-else class="i-carbon-user text-xl text-white" />
             </div>
 
             <!-- 用户名称和ID -->
             <div>
-              <h2 class="text-lg font-bold sm:text-xl dark:text-white">
+              <h2 class="text-lg font-bold text-center sm:text-xl dark:text-white md:text-left">
                 {{ userInfo?.personaName || '游戏玩家' }}
               </h2>
-              <p class="text-xs text-gray flex gap-1 items-center sm:text-sm dark:text-blue-100/70">
+              <p
+                class="text-xs text-gray flex gap-1 items-center justify-center sm:text-sm dark:text-blue-100/70 md:justify-start">
                 <span class="i-carbon-logo-steam" />
                 {{ steamId }}
               </p>
@@ -206,13 +208,14 @@ function goBack() {
           </div>
 
           <!-- 报告信息 -->
-          <div class="text-right">
-            <h1 class="text-lg text-white font-bold flex gap-2 items-center justify-end sm:text-xl">
+          <div class="text-center md:text-right">
+            <h1 class="text-lg text-white font-bold flex gap-2 items-center justify-center sm:text-xl md:justify-end">
               <span class="i-carbon-analytics" />
               AI锐评报告
               <span v-if="modelInfo" class="text-sm px-2 py-1 rounded-lg bg-blue-500/80">{{ modelInfo.version }}</span>
             </h1>
-            <p v-if="modelInfo" class="text-sm text-gray mt-1 flex gap-1 items-center justify-end sm:text-sm dark:text-blue-100/70">
+            <p v-if="modelInfo"
+              class="text-sm text-gray mt-1 flex gap-1 items-center justify-center sm:text-sm dark:text-blue-100/70 md:justify-end">
               <span class="i-carbon-ai-generate text-xs" />
               {{ modelInfo.modelName }}
             </p>
@@ -230,11 +233,9 @@ function goBack() {
               正在生成中...
             </span>
           </div>
-          <div
-            v-if="reviewText"
+          <div v-if="reviewText"
             class="markdown-content text-sm text-gray-800 leading-relaxed sm:text-base dark:text-gray-200"
-            v-html="parsedReviewHtml"
-          />
+            v-html="parsedReviewHtml" />
           <p v-else class="text-sm text-gray-800 leading-relaxed sm:text-base dark:text-gray-200">
             正在生成AI锐评...
           </p>
@@ -244,8 +245,7 @@ function goBack() {
         <div class="flex flex-col gap-3 items-center justify-between sm:flex-row">
           <button
             class="text-sm px-3 py-1.5 rounded-lg bg-gray-100 flex gap-2 w-full transition-colors items-center justify-center sm:px-4 sm:py-2 dark:bg-gray-700 hover:bg-gray-200 sm:w-auto sm:justify-start dark:hover:bg-gray-600"
-            @click="goBack"
-          >
+            @click="goBack">
             <span class="i-carbon-arrow-left" />
             重新生成
           </button>
@@ -253,8 +253,7 @@ function goBack() {
           <div class="flex gap-2 w-full sm:gap-3 sm:w-auto">
             <button
               class="text-sm text-white px-3 py-1.5 rounded-lg bg-blue-600 flex flex-1 gap-2 transition-colors items-center justify-center sm:px-4 sm:py-2 hover:bg-blue-700 sm:flex-auto"
-              @click="copyReview"
-            >
+              @click="copyReview">
               <span v-if="copySuccess" class="i-carbon-checkmark" />
               <span v-else class="i-carbon-copy" />
               {{ copySuccess ? '已复制' : '复制文本' }}
@@ -263,10 +262,8 @@ function goBack() {
             <!-- 生成图片按钮 -->
             <button
               class="text-sm text-white px-3 py-1.5 rounded-lg bg-green-600 flex flex-1 gap-2 transition-colors items-center justify-center sm:px-4 sm:py-2 hover:bg-green-700 sm:flex-auto"
-              :disabled="isGeneratingImage"
-              :class="{ 'opacity-70 cursor-not-allowed': isGeneratingImage }"
-              @click="reviewImageRef?.generateImage()"
-            >
+              :disabled="isGeneratingImage" :class="{ 'opacity-70 cursor-not-allowed': isGeneratingImage }"
+              @click="reviewImageRef?.generateImage()">
               <span v-if="isGeneratingImage" class="i-carbon-circle-dash animate-spin" />
               <span v-else class="i-carbon-share" />
               {{ isGeneratingImage ? '生成中...' : '生成图片' }}
@@ -278,12 +275,6 @@ function goBack() {
   </div>
 
   <!-- 图片生成器组件 -->
-  <ReviewImageGenerator
-    ref="reviewImageRef"
-    v-model:is-generating-image="isGeneratingImage"
-    :review-text="reviewText"
-    :steam-id="steamId"
-    :model-info="modelInfo"
-    :user-info="userInfo"
-  />
+  <ReviewImageGenerator ref="reviewImageRef" v-model:is-generating-image="isGeneratingImage" :review-text="reviewText"
+    :steam-id="steamId" :model-info="modelInfo" :user-info="userInfo" />
 </template>
