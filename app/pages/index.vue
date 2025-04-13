@@ -5,10 +5,10 @@ import { appDescription } from '~/constants'
 <template>
   <div class="px-4 flex flex-col h-full items-center justify-center sm:px-6">
     <!-- 添加Steam接口限制提示 -->
-    <div class="text-amber-800 mb-4 p-3 border border-amber-200 rounded-lg bg-amber-50 flex gap-2 max-w-md w-full shadow-sm items-center dark:text-amber-200 sm:mb-6 dark:border-amber-700/50 dark:bg-amber-900/30">
+    <div class="text-amber-800 my-4 p-3 border border-amber-200 rounded-lg bg-amber-50 flex gap-2 max-w-md w-full shadow-sm items-center dark:text-amber-200 sm:mb-6 dark:border-amber-700/50 dark:bg-amber-900/30">
       <span class="i-carbon-warning-alt text-lg text-amber-500 flex-shrink-0 dark:text-amber-400" />
       <p class="text-sm font-medium">
-        当前Steam接口高频访问已被官方限制，请耐心等待
+        当前Steam接口高频访问已被官方限制，服务暂不可用
       </p>
     </div>
     <div class="mb-6 text-center sm:mb-10">
