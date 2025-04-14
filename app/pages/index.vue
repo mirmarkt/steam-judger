@@ -8,7 +8,7 @@ import { appDescription } from '~/constants'
     <div class="text-green-800 my-4 p-3 border border-green-200 rounded-lg bg-green-50 flex gap-2 max-w-md w-full shadow-sm items-center dark:text-green-200 sm:mb-6 dark:border-green-700/50 dark:bg-green-900/30">
       <span class="i-carbon-favorite text-lg text-green-500 flex-shrink-0 dark:text-green-400" />
       <p class="text-sm font-medium">
-        感谢默默支持我们的用户，我们会竭力维护网站正常运行，感谢您的支持！
+        感谢默默支持的盒友们 ，我们会竭力维护正常运行，感谢您的支持！
       </p>
     </div>
     <div class="mb-6 text-center sm:mb-10">
