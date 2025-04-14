@@ -84,7 +84,7 @@ async function handleSubmit() {
       </div>
     </div>
 
-    <button
+    <!-- <button
       class="text-sm text-white font-medium px-4 py-2.5 rounded-lg bg-blue-600 flex gap-2 w-full transition-colors items-center justify-center sm:text-base sm:px-6 sm:py-3 hover:bg-blue-700"
       :class="{ 'opacity-70 cursor-not-allowed': isLoading }"
       :disabled="isLoading || !steamId"
@@ -93,13 +93,14 @@ async function handleSubmit() {
       <span v-if="isLoading" class="i-carbon-circle-dash animate-spin" />
       <span v-else class="i-carbon-analytics" />
       {{ isLoading ? '生成中...' : '生成AI锐评' }}
-    </button>
-    <!-- <button
+    </button> -->
+    <button
       class="text-sm text-white font-medium px-4 py-2.5 rounded-lg bg-blue-600 flex gap-2 w-full transition-colors items-center justify-center sm:text-base sm:px-6 sm:py-3 hover:bg-blue-700"
       :class="{ 'opacity-70 cursor-not-allowed': isLoading }"
       :disabled="isLoading || !steamId"
     >
-    半小时停机维护中
-    </button> -->
+    <!-- 半小时停机维护中 -->
+     Steam 数据接口被限制访问 正在寻求解决方案
+    </button>
   </div>
 </template>
