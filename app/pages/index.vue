@@ -29,6 +29,7 @@ import { appDescription } from '~/constants'
     </div>
 
     <div class="mb-6 p-4 rounded-xl bg-white max-w-md w-full shadow-lg sm:mb-8 sm:p-6 dark:bg-gray-800">
+      <SteamIdInput />
       <div class="p-4 text-center">
         <div class="mb-4 flex justify-center">
           <div class="i-carbon-warning-alt text-4xl text-yellow-500" />
